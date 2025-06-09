@@ -29,7 +29,8 @@ object ApproveOrg {
       .exec(http("AdminOrg_010_020_UserDetails")
         .get(AdminUrl + "/api/user/details")
         .headers(Environment.getHeader)
-        .header("accept", "application/json, text/plain, */*"))
+        .header("accept", "application/json, text/plain, */*")
+        .check(status.in(200, 401)))
 
       .exec(http("AdminOrg_010_025_IsAuthenticated")
         .get(AdminUrl + "/auth/isAuthenticated")
@@ -44,7 +45,7 @@ object ApproveOrg {
         .check(regex("/oauth2/callback&amp;state=(.*)&amp;nonce=").saveAs("state"))
         .check(regex("nonce=(.*)&amp;response_type").saveAs("nonce")))
 
-      .exec(getCookieValue(CookieKey("XSRF-TOKEN").withDomain("administer-orgs.#{env}.platform.hmcts.net").saveAs("XSRFToken")))
+      .exec(getCookieValue(CookieKey("XSRF-TOKEN").withDomain("administer-orgs.#{env}.platform.hmcts.net").withSecure(true).saveAs("XSRFToken")))
     }
 
     .pause(Environment.thinkTime)

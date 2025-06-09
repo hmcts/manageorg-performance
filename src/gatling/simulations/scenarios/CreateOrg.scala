@@ -26,7 +26,7 @@ object CreateOrg {
         .headers(Environment.navigationHeader)
         .check(substring("base href")))
 
-      .exec(getCookieValue(CookieKey("XSRF-TOKEN").saveAs("XSRFToken")))
+      .exec(getCookieValue(CookieKey("XSRF-TOKEN").withSecure(true).saveAs("XSRFToken")))
 
       .exec(http("CreateOrg_010_010_ConfigurationUI1")
         .get("/external/configuration-ui/")
