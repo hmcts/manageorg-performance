@@ -64,7 +64,7 @@ object ApproveOrg {
         .formParam("selfRegistrationEnabled", "false")
         .formParam("mojLoginEnabled", "true")
         .formParam("_csrf", "#{csrfToken}")
-        .check(substring("base href"))
+        .check(substring("meta name"))
         )
 
       .exec(http("AdminOrg_020_010_EnvConfig1")
