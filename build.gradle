@@ -2,12 +2,12 @@ plugins {
   id 'org.owasp.dependencycheck' version '8.2.1'
   id 'scala'
   id 'java-library'
-  id 'io.gatling.gradle' version '3.9.3'
+  id 'io.gatling.gradle' version '3.14.3'
 }
  
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
  
@@ -31,11 +31,8 @@ repositories {
 }
  
 gatling {
-  gatlingVersion '3.9.3'
-  scalaVersion '2.13.10'
-  simulations = {
-    include "simulations/ManageOrgSimulation.scala"
-  }
+  gatlingVersion '3.14.3'
+  scalaVersion '2.13.11'
 }
  
 sourceSets {
