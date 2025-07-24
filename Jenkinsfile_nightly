@@ -7,7 +7,7 @@ properties([
     ])
 ])
 
-@Library("Infrastructure")
+@Library("Infrastructure@jenkins-alerts-poc")
 
 def type = "java"
 def product = "xui"
@@ -25,7 +25,7 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 withNightlyPipeline("java", product, component) {
     // loadVaultSecrets(secrets)
 
-    enablePerformanceTest(20)
+    enablePerformanceTest(timeout=20, perfGatlingAlerts=true, perfRerunOnFail=true)
 
     after('performanceTest') {
         steps.archiveArtifacts allowEmptyArchive: true, artifacts: 'functional-output/**/*'
