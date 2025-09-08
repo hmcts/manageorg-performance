@@ -281,7 +281,7 @@ object ApproveOrg {
         .get(AdminUrl + "/api/monitoring-tools")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
-        .check(substring("key")))
+        .check(substring("InstrumentationKey")))
 
       .exec(http("AdminOrg_060_010_IsAuthenticated1")
         .get(AdminUrl + "/auth/isAuthenticated")
@@ -328,7 +328,7 @@ object ApproveOrg {
         .get(AdminUrl + "/api/monitoring-tools")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
-        .check(substring("key")))
+        .check(substring("InstrumentationKey")))
 
       .exec(http("AdminOrg_060_010_IsAuthenticated1")
         .get(AdminUrl + "/auth/isAuthenticated")
