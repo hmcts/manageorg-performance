@@ -52,20 +52,19 @@ object ApproveOrg {
 
   val ApproveOrgLogin =
 
-    // feed(adminusers)
-    group("AdminOrg_020_Login") {
+    feed(adminusers)
+
+    .group("AdminOrg_020_Login") {
       exec(http("AdminOrg_020_005_Login")
         .post(Environment.idamURL + "/login?client_id=xuiaowebapp&redirect_uri=" + AdminUrl + "/oauth2/callback&state=#{state}&nonce=#{nonce}&response_type=code&scope=profile%20openid%20roles%20manage-user%20create-user&prompt=")
         .headers(Environment.navigationHeader)
         .header("sec-fetch-site", "same-origin")
-        .formParam("username", "vmuniganti@mailnesia.com")
-        .formParam("password", "Monday01")
-        .formParam("save", "Sign in")
+        .formParam("username", "#{username}")
+        .formParam("password", "#{password}")
         .formParam("selfRegistrationEnabled", "false")
         .formParam("mojLoginEnabled", "true")
         .formParam("_csrf", "#{csrfToken}")
-        .check(substring("meta name"))
-        )
+        .check(substring("meta name")))
 
       .exec(http("AdminOrg_020_010_EnvConfig1")
         .get(AdminUrl + "/api/environment/config")
@@ -130,8 +129,7 @@ object ApproveOrg {
       .check(jsonPath("$.organisations[0].pendingPaymentAccount[2]").optional.saveAs("PBA3"))
       .check(jsonPath("$.organisations[0].superUser.firstName").saveAs("firstName"))
       .check(jsonPath("$.organisations[0].superUser.lastName").saveAs("lastName"))
-      .check(jsonPath("$.organisations[0].superUser.email").saveAs("email"))
-      )
+      .check(jsonPath("$.organisations[0].superUser.email").saveAs("email")))
 
     .pause(Environment.thinkTime)
 
@@ -208,7 +206,6 @@ object ApproveOrg {
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
         .check(jsonPath("$.status").is("PENDING")))
-
     }
 
     .pause(Environment.thinkTime)
