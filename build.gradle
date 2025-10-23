@@ -10,7 +10,16 @@ java {
     languageVersion = JavaLanguageVersion.of(21)
   }
 }
- 
+
+dependencies {
+    gatlingImplementation project(':common-performance')
+}
+
+dependencyCheck {
+    suppressionFile = "common/common-performance/owasp/owasp-suppressions.xml"
+    analyzers.assemblyEnabled = false
+}
+
 tasks.withType(JavaExec) {
   // Configure the size of the JVM if necessary
   jvmArgs = ['-Xms1024m', '-Xmx2048m']
