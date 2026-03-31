@@ -21,6 +21,19 @@ dependencyCheck {
     analyzers.assemblyEnabled = false
 }
 
+// Groovy DSL
+configurations.all {
+    resolutionStrategy {
+        force 'io.netty:netty-bom:4.2.10.Final'
+        eachDependency { details ->
+            if (details.requested.group == 'io.netty') {
+                details.useVersion '4.2.10.Final'
+                details.because 'CVE-2026-33870, CVE-2026-33871 - force upgrade of all Netty transitive deps'
+            }
+        }
+    }
+}
+
 tasks.withType(JavaExec) {
   // Configure the size of the JVM if necessary
   jvmArgs = ['-Xms1024m', '-Xmx2048m']
