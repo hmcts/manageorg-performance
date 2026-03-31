@@ -13,7 +13,7 @@ java {
 
 dependencies {
     gatlingImplementation project(':common-performance')
-    implementation platform('io.netty:netty-bom:4.2.10.Final')
+    implementation platform('io.netty:netty-bom:4.2.12.Final')
 }
 
 dependencyCheck {
@@ -24,7 +24,7 @@ dependencyCheck {
 // Groovy DSL
 configurations.all {
     resolutionStrategy {
-        force 'io.netty:netty-bom:4.2.10.Final'
+        force 'io.netty:netty-bom:4.2.12.Final'
         eachDependency { details ->
             if (details.requested.group == 'io.netty') {
                 details.useVersion '4.2.10.Final'
