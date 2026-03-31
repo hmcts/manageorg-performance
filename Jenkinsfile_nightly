@@ -27,6 +27,7 @@ withNightlyPipeline("java", product, component) {
 
     afterAlways('checkout') {
         sh """ git submodule update --init --recursive"""
+        sh """./gradlew clean"""
     }
 
     enablePerformanceTest(timeout=20, perfGatlingAlerts=true, perfRerunOnFail=true)
