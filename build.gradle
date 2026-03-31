@@ -13,6 +13,7 @@ java {
 
 dependencies {
     gatlingImplementation project(':common-performance')
+    implementation platform('io.netty:netty-bom:4.2.10.Final')
 }
 
 dependencyCheck {
