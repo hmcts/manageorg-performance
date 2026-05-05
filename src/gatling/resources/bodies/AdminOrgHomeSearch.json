@@ -1,16 +1,16 @@
 {
   "searchRequest": {
-     "search_filter": "",
-     "sorting_parameters": [
-        {
-           "sort_by": "organisationId",
-           "sort_order": "asc"
-        }
-     ],
-     "pagination_parameters": {
-        "page_number": 1,
-        "page_size": 10
-     }
+    "search_filter": "",
+    "sorting_parameters": [
+      {
+        "sort_by": "organisationId",
+        "sort_order": "asc"
+      }
+    ],
+    "pagination_parameters": {
+      "page_number": 1,
+      "page_size": 10
+    }
   },
   "view": "NEW"
 }
