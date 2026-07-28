@@ -70,20 +70,7 @@ object ApproveOrg {
         .formParam("action", "_submit")
         .formParam("password", "#{password}")
         .formParam("_csrf", "#{csrfToken}")
-        //.check(regex("Approve organisation"))
-      )
-
-//    .group("AdminOrg_020_Login") {
-//      exec(http("AdminOrg_020_005_Login")
-//        .post(Environment.idamURL + "/login?client_id=xuiaowebapp&redirect_uri=" + AdminUrl + "/oauth2/callback&state=#{state}&nonce=#{nonce}&response_type=code&scope=profile%20openid%20roles%20manage-user%20create-user&code_challenge=#{code_challenge}&code_challenge_method=S256&prompt=")
-//        .headers(Environment.navigationHeader)
-//        .header("sec-fetch-site", "same-origin")
-//        .formParam("username", "#{username}")
-//        .formParam("password", "#{password}")
-//        .formParam("selfRegistrationEnabled", "false")
-//        .formParam("mojLoginEnabled", "true")
-//        .formParam("_csrf", "#{csrfToken}")
-//        .check(substring("meta name")))
+        .check(status.is(200)))
 
       //see xui-webapp cookie capture in the Homepage scenario for details of why this is being used
       .exec(addCookie(Cookie("ao-webapp", "#{aoWebAppCookie}")
