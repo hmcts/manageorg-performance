@@ -129,16 +129,16 @@ class ManageOrgSimulation extends Simulation{
           Seq(global.successfulRequests.percent.gte(95),
             details("CreateOrg_020_SubmitNewOrgRegistration").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
             details("CreateOrg_020_SubmitOtherOrgRegistration").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
-            details("AdminOrg_050_AddPBA").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
-            details("AdminOrg_060_ApproveOrg").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt)
+            details("AdminOrg_070_AddPBA").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
+            details("AdminOrg_080_ApproveOrg").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt)
           )
         }
         else{
           Seq(global.successfulRequests.percent.gte(95),
             details("CreateOrg_020_SubmitNewOrgRegistration").successfulRequests.count.is(1),
             details("CreateOrg_020_SubmitOtherOrgRegistration").successfulRequests.count.is(1),
-            details("AdminOrg_050_AddPBA").successfulRequests.count.is(1),
-            details("AdminOrg_060_ApproveOrg").successfulRequests.count.is(2)
+            details("AdminOrg_070_AddPBA").successfulRequests.count.is(1),
+            details("AdminOrg_080_ApproveOrg").successfulRequests.count.is(2)
           )
         }
       case "pipeline" =>
