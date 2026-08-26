@@ -1,0 +1,44 @@
+{
+  "data": {
+    "partyRadioList": {
+      "value": {
+        "code": "#{randomUuid()}",
+        "label": "Possessions Claim Solicitor Org - Claimant 1"
+      },
+      "list_items": [
+        {
+          "code": "466e615a-b7a9-4373-854f-b4f7fd7453e8",
+          "label": "Possessions Claim Solicitor Org - Claimant 1"
+        },
+        {
+          "code": "d126f969-4810-4156-a75a-37ce00561ab9",
+          "label": "Perf Test - Defendant 1"
+        }
+      ],
+      "valueCode": "#{randomUuid()}",
+      "valueLabel": "Possessions Claim Solicitor Org - Claimant 1"
+    },
+    "enter_genapp_DateReceived": "2026-08-01",
+    "enter_genapp_ApplicationTypeOption": "ADJOURN",
+    "enter_genapp_Within14Days": "YES",
+    "enter_genapp_FeeReceived": "YES",
+    "enter_genapp_FeeAmountReceived": "30000",
+    "enter_genapp_AppliedForHwf": "YES",
+    "enter_genapp_HwfReference": "123",
+    "enter_genapp_AllPartiesAgree": "YES",
+    "uploadSingleDocument": {
+      "document_url": "#{GADocumentURL}",
+      "document_binary_url": "#{GADocumentURL}/binary",
+      "document_filename": "2MB.pdf",
+      "document_hash": "#{GADocumentHash}"
+    },
+    "enter_genapp_RelatedEvidence": []
+  },
+  "event": {
+    "id": "enterGenApp",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "#{eventToken}",
+  "ignore_warning": false
+}

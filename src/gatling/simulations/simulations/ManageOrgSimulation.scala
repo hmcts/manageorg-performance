@@ -1,5 +1,6 @@
 package simulations
 
+import ccd.{CcdCaseType, CcdCaseTypes}
 import com.typesafe.config.{Config, ConfigFactory}
 import io.gatling.core.Predef.{exec, _}
 import io.gatling.http.Predef._
@@ -34,7 +35,8 @@ class ManageOrgSimulation extends Simulation{
 
 	/* PERFORMANCE TEST CONFIGURATION */
 	val approveOrgTargetPerHour:Double = 360 //360
-  val approveOtherOrgTargetPerHour:Double = 20
+  	val approveOtherOrgTargetPerHour:Double = 20
+  	val pcsCaseCreateViewUpdateTargetPerHour: Double = 50
 
 	val rampUpDurationMins = 5 //5
 	val rampDownDurationMins = 5 //5 
@@ -96,6 +98,14 @@ class ManageOrgSimulation extends Simulation{
         )
     }
 
+  val PCSSolicitorCreateUpdateViewCase = scenario("PCS Case Create, Update, View case via CCD API")
+    .exitBlockOnFail {
+      exec(_.set("env", s"${env}"))
+        .exec(
+          PCSSolicitor.create
+        )
+    }
+
 	/*===============================================================================================
 	* Simulation Configuration
 	 ===============================================================================================*/
@@ -151,8 +161,9 @@ class ManageOrgSimulation extends Simulation{
   }
 
 	setUp(
-		ManageAndApproveOrg.inject(simulationProfile(testType, approveOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-    ManageAndApproveOtherOrg.inject(simulationProfile(testType, approveOtherOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		//ManageAndApproveOrg.inject(simulationProfile(testType, approveOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+    	//ManageAndApproveOtherOrg.inject(simulationProfile(testType, approveOtherOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
 		
 	).protocols(httpProtocol)
      .assertions(assertions(testType))

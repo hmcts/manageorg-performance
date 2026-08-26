@@ -1,0 +1,12 @@
+{
+  "data": {
+    "targetState": "HEARING_READINESS"
+  },
+  "event": {
+    "id": "changeCaseState",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "#{eventToken}",
+  "ignore_warning": false
+}

@@ -1,0 +1,23 @@
+{
+  "data": {
+    "feeAmount": "£415",
+    "propertyAddress": {
+      "AddressLine1": "1 Second Avenue",
+      "AddressLine2": "",
+      "AddressLine3": "",
+      "PostTown": "London",
+      "County": "",
+      "Country": "United Kingdom",
+      "PostCode": "W3 7RX"
+    },
+    "legislativeCountry": "England"
+  },
+  "event": {
+    "id": "createPossessionClaim",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "#{eventToken}",
+  "ignore_warning": false,
+  "draft_id": null
+}
