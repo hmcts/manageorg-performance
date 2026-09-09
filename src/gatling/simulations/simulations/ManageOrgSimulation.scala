@@ -52,7 +52,7 @@ class ManageOrgSimulation extends Simulation{
 	val pauseOption:PauseType = debugMode match{
 		case "off" if testType == "perftest" => constantPauses
 		case "off" if testType == "pipeline" => customPauses(pipelinePausesMillis)
-		case _ => constantPauses//disabledPauses
+		case _ => disabledPauses
 	}
 
   val httpProtocol = http

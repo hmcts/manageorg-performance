@@ -19,7 +19,7 @@ object PCSSolicitor {
 				.set("solicitorEmail", session("email").as[String])
 				.set("solicitorPassword", session("password").as[String]))
 
-		feed(feedPCSHousingUserData)
+		.feed(feedPCSHousingUserData)
 			.exec(session => session
 				.set("housingEmail", session("email").as[String])
 				.set("housingPassword", session("password").as[String]))
