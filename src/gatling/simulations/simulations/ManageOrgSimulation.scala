@@ -36,7 +36,9 @@ class ManageOrgSimulation extends Simulation{
 	/* PERFORMANCE TEST CONFIGURATION */
 	val approveOrgTargetPerHour:Double = 360 //360
   	val approveOtherOrgTargetPerHour:Double = 20
-  	val pcsCaseCreateViewUpdateTargetPerHour: Double = 1//50
+  	val pcsCaseCreateViewUpdateTargetPerHour: Double = 50
+	val manageOrgUpdateTargetPerHour: Double = 20
+
 
 	val rampUpDurationMins = 1 //5
 	val rampDownDurationMins = 1 //5 
@@ -106,6 +108,16 @@ class ManageOrgSimulation extends Simulation{
         )
     }
 
+  val ManageOrgGroupAccess = scenario("Manage Org and Users Group Access")
+  .exitBlockOnFail {
+      exec(_.set("env", s"${env}"))
+        .exec(
+          ManageOrg.LandingPage,
+          ManageOrg.Login,
+		  ManageOrg.Users
+        )
+    }
+
 	/*===============================================================================================
 	* Simulation Configuration
 	 ===============================================================================================*/
@@ -163,8 +175,9 @@ class ManageOrgSimulation extends Simulation{
 	setUp(
 		//ManageAndApproveOrg.inject(simulationProfile(testType, approveOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
     	//ManageAndApproveOtherOrg.inject(simulationProfile(testType, approveOtherOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		
+		//PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+
 	).protocols(httpProtocol)
      .assertions(assertions(testType))
 }
