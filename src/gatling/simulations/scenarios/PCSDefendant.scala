@@ -6,9 +6,9 @@ import io.gatling.http.Predef._
 import scenarios.api.payments
 import utilities._
 
-object PCSSolicitor {
+object PCSDefendant {
 
-	val feedPCSUserData = csv("PCSSolicitorUserData.csv").circular
+	val feedPCSDefendantData = csv("PCSDefendantUserData.csv").circular
 	val feedPCSCWUserData = csv("PCSCWUserData.csv").circular
 	val feedPCSHousingUserData = csv("PCSHousingUserData.csv").circular
 
