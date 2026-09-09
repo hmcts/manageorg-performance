@@ -32,7 +32,7 @@
       "valueCode": "PROVIDER_OF_SOCIAL_HOUSING"
     },
     "claimAgainstTrespassers": "NO",
-    "claimantContactEmail": "pcs-solicitor101@test.com",
+    "claimantContactEmail": "#{solicitorEmail}",
     "isCorrectClaimantContactEmail": "YES",
     "orgAddressFound": "Yes",
     "organisationAddress": {
@@ -47,7 +47,7 @@
     "claimantProvidePhoneNumber": "NO",
     "defendant1": {
       "nameKnown": "YES",
-      "firstName": "Wa",
+      "firstName": "GA",
       "lastName": "Perftest",
       "addressKnown": "NO",
       "addressSameAsPossession": null,
@@ -126,7 +126,7 @@
       "SUSPENSION_OF_RIGHT_TO_BUY"
     ],
     "suspensionOfRTB_HousingAct": "SECTION_82A_2",
-    "suspensionOfRTB_Reason": "WA perf testing the suspension",
+    "suspensionOfRTB_Reason": "GA perf testing the suspension",
     "additionalReasonsForPossession": {
       "hasReasons": "NO",
       "reasons": null
@@ -198,7 +198,7 @@
             "valueCode": "0460d45d-8a26-4df5-9c74-dda9e963c6ca",
             "valueLabel": "Witness statement"
           },
-          "description": "WA witness statement",
+          "description": "GA witness statement",
           "document": {
             "document_url": "#{RentStatementDocumentURL}",
             "document_binary_url": "#{RentStatementDocumentURL}/binary",
@@ -215,7 +215,7 @@
     "endButtonLabel": "Submit claim",
     "statementOfTruth": {
       "completedBy": "CLAIMANT",
-      "fullNameParty": "WA",
+      "fullNameParty": "GA",
       "positionParty": "Perftest",
       "fullNameLegalRep": null,
       "firmNameLegalRep": null,

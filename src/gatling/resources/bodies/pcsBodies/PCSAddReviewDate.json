@@ -1,0 +1,21 @@
+{
+  "data": {
+    "reviewDates": [
+      {
+        "value": {
+          "date": "#{pastDate}",
+          "reason": "UNLESS_ORDER",
+          "description": "WA Perftest"
+        },
+        "id": "#{randomUuid()}"
+      }
+    ]
+  },
+  "event": {
+    "id": "addCaseReviewDate",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "#{eventToken}",
+  "ignore_warning": false
+}

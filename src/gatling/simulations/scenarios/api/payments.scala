@@ -22,8 +22,8 @@ object payments {
       .exec(http("CCD_GetBearerToken")
         .post(Environment.idamAPI + "/o/token")
         .formParam("grant_type", "password")
-        .formParam("username", "#{email}")
-        .formParam("password", "#{password}")
+        .formParam("username", "#{cwEmail}")
+        .formParam("password", "#{cwPassword}")
         .formParam("client_id", clientId)
         .formParam("client_secret", clientSecret)
         .formParam("scope", "openid profile roles search-user")
@@ -52,7 +52,7 @@ object payments {
           .header("Authorization", "Bearer #{access_tokenPayments}")
           .header("ServiceAuthorization", "#{pcs_apiAuthToken}")
           .header("Content-type", "application/json")
-          .body(ElFileBody("pcsBodies/PCSAddPayment.json")))
+          .body(ElFileBody("bodies/pcsBodies/PCSAddPayment.json")))
       }
 
       .pause(Environment.constantthinkTime)
