@@ -30,7 +30,7 @@ object payments {
         .header("Content-Type", "application/x-www-form-urlencoded")
         .check(jsonPath("$.access_token").saveAs("access_tokenPayments")))
 
-      .pause(7, constantPauses)
+      .pause(10, constantPauses)
 
       .exec(http("PaymentAPI_GetCasePaymentOrders")
         .get(Environment.paymentsUrl + "/case-payment-orders?case_ids=#{caseId}")

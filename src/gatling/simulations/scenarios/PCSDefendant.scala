@@ -4,7 +4,12 @@ import ccd._
 import io.gatling.core.Predef._
 import io.gatling.http.Predef._
 import scenarios.api.payments
+import utils._
 import utilities._
+import ccd.CcdHelper.authenticate
+import xui._
+import xui.XuiHelper.xuiUrl
+// import ccd.CcdCaseTypes
 
 object PCSDefendant {
 
@@ -12,19 +17,44 @@ object PCSDefendant {
 	val feedPCSCWUserData = csv("PCSCWUserData.csv").circular
 	val feedPCSHousingUserData = csv("PCSHousingUserData.csv").circular
 
-	val create = {
+	val NOC = {
 
-		feed(feedPCSUserData)
+		feed(feedPCSDefendantData)
 			.exec(session => session
-				.set("solicitorEmail", session("email").as[String])
-				.set("solicitorPassword", session("password").as[String]))
+				.set("defendantEmail", session("email").as[String])
+				.set("defendantPassword", session("password").as[String])
+				.set("caseId", "1788991038493785") // For debugging
+				.set("caseType", "PCS"))
 
-		.feed(feedPCSHousingUserData)
-			.exec(session => session
-				.set("housingEmail", session("email").as[String])
-				.set("housingPassword", session("password").as[String]))
+		.exec(XuiHelper.Homepage)
+		.exec(XuiHelper.Login("#{defendantEmail}", "#{defendantPassword}"))
 
-		.exec(CcdHelper.createCase("#{housingEmail}", "#{housingPassword}", CcdCaseTypes.PCS_PCS, "createPossessionClaim", "bodies/pcsBodies/PCSCreateCase.json"))
+		.exec(http("XUI_020_DefendantNOCQuestions")
+        	.get(xuiUrl + "/api/noc/nocQuestions?caseId=#{caseId}")
+        	.headers(Environment.getHeader)
+        	.header("accept", "application/json, text/plain, */*")
+        	.check(substring("Enter client first name")))
+
+		.exec(getCookieValue(CookieKey("XSRF-TOKEN").withDomain(xuiUrl.replace("https://", "")).withSecure(true).saveAs("XSRFToken")))
+
+		//.exec(authenticate("#{defendantEmail}", "#{defendantEmail}", CcdCaseTypes.PCS_PCS.microservice, CcdCaseTypes.PCS_PCS.clientId))
+
+		.exec(http("XUI_030_DefendantNOCValidateQuestions")
+			.post(xuiUrl + "/api/noc/validateNoCQuestions")
+			.headers(Environment.postHeader)
+      		.header("x-xsrf-token", "#{XSRFToken}")
+			.body(ElFileBody("bodies/pcsBodies/PCSValidateNoCQuestions.json"))
+     		.check(substring("Notice of Change answers verified successfully")))
+
+		.exec(http("XUI_040_DefendantNOC")
+			.post(xuiUrl + "/api/noc/submitNoCEvents")
+			.headers(Environment.postHeader)
+      		.header("x-xsrf-token", "#{XSRFToken}")
+			.body(ElFileBody("bodies/pcsBodies/PCSSubmitNoC.json"))
+     		.check(substring("APPROVED")))
+
+		//.exec(CcdHelper.addCaseEvent("#{defendantEmail}", "#{defendantEmail}", CcdCaseTypes.PCS_PCS, "#{caseId}", "caseworkerNoticeOfChange", "bodies/pcsBodies/PCSSubmitNOC.json"))	
+		/*.exec(CcdHelper.createCase("#{housingEmail}", "#{housingPassword}", CcdCaseTypes.PCS_PCS, "createPossessionClaim", "bodies/pcsBodies/PCSCreateCase.json"))
 		.feed(feedPCSCWUserData)
 			.exec(session => session
 				.set("cwEmail", session("email").as[String])
@@ -54,7 +84,7 @@ object PCSDefendant {
 		.exec(payments.AddPCSPayment)
 		.exec(_.set("pastDate", DateUtils.getDatePast("yyyy-MM-dd", days = 10)))
 		.exec(CcdHelper.addCaseEvent("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "addCaseReviewDate", "bodies/pcsBodies/PCSAddReviewDate.json"))
-	}
+	*/}
 		//.feed(feedPCSCWUserData)
 //		.exec(CcdHelper.uploadDocumentToCdam("#{email}", "#{password}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
 //			jsonPath("$.documents[0]._links.self.href").saveAs("GADocumentURL"),
