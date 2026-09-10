@@ -12,7 +12,7 @@ object PCSClaimant {
 	val feedPCSCWUserData = csv("PCSCWUserData.csv").circular
 	val feedPCSHousingUserData = csv("PCSHousingUserData.csv").circular
 
-	val create = {
+	val Create = {
 
 		feed(feedPCSUserData)
 			.exec(session => session

@@ -9,7 +9,6 @@ import utilities._
 import ccd.CcdHelper.authenticate
 import xui._
 import xui.XuiHelper.xuiUrl
-// import ccd.CcdCaseTypes
 
 object PCSDefendant {
 
@@ -23,18 +22,28 @@ object PCSDefendant {
 			.exec(session => session
 				.set("defendantEmail", session("email").as[String])
 				.set("defendantPassword", session("password").as[String])
-				.set("caseId", "1788990169492996") // For debugging
+				//.set("caseId", "1788986961104250") // For debugging
 				.set("caseType", "PCS"))
 
-		.exec(XuiHelper.Homepage)
+		/*=============================================
+		Manage case landing page
+		===============================================*/
 
+		.exec(XuiHelper.Homepage)
 		.pause(Environment.thinkTime)
+
+		/*=============================================
+		Login
+		===============================================*/
 
 		.exec(XuiHelper.Login("#{defendantEmail}", "#{defendantPassword}"))
-
 		.pause(Environment.thinkTime)
 
-		.exec(http("XUI_020_DefendantNOCQuestions")
+		/*=============================================
+		Select NoC
+		===============================================*/
+
+		.exec(http("XUI_010_DefendantNOCQuestions")
         	.get(xuiUrl + "/api/noc/nocQuestions?caseId=#{caseId}")
         	.headers(Environment.getHeader)
         	.header("accept", "application/json, text/plain, */*")
@@ -44,9 +53,11 @@ object PCSDefendant {
 
 		.exec(getCookieValue(CookieKey("XSRF-TOKEN").withDomain(xuiUrl.replace("https://", "")).withSecure(true).saveAs("XSRFToken")))
 
-		//.exec(authenticate("#{defendantEmail}", "#{defendantEmail}", CcdCaseTypes.PCS_PCS.microservice, CcdCaseTypes.PCS_PCS.clientId))
+		/*=============================================
+		Validate NoC Answers
+		===============================================*/
 
-		.exec(http("XUI_030_DefendantNOCValidateQuestions")
+		.exec(http("XUI_020_DefendantNOCValidateQuestions")
 			.post(xuiUrl + "/api/noc/validateNoCQuestions")
 			.headers(Environment.postHeader)
       		.header("x-xsrf-token", "#{XSRFToken}")
@@ -55,7 +66,11 @@ object PCSDefendant {
 		
 		.pause(Environment.thinkTime)
 
-		.exec(http("XUI_040_DefendantNOC")
+		/*=============================================
+		Submit NoC
+		===============================================*/
+
+		.exec(http("XUI_030_DefendantNOC")
 			.post(xuiUrl + "/api/noc/submitNoCEvents")
 			.headers(Environment.postHeader)
       		.header("x-xsrf-token", "#{XSRFToken}")
@@ -66,21 +81,29 @@ object PCSDefendant {
 
 	val ViewCaseList = 
 
-		group("XUI_060_ViewCaseList") {
-		  exec(http("XUI_060_005_DefendantWorkBasketInputs")
+		/*=============================================
+		Retrieve cases for user
+		===============================================*/
+
+		group("XUI_040_DefendantViewCaseList") {
+		  exec(http("XUI_040_005_DefendantWorkBasketInputs")
         	.get(xuiUrl + "/data/internal/case-types/PCS/work-basket-inputs")
         	.headers(Environment.getHeader)
-        	.header("accept", "application/json, text/plain, */*")
+        	.header("accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-workbasket-input-details.v2+json;charset=UTF-8")
+			.header("accept-encoding","gzip, deflate, br, zstd")
+			.header("content-type","application/json")
+			.header("experimental","true")
         	.check(substring("/PCS/work-basket-inputs")))
 
-		  .exec(http("XUI_060_010_SearchCases")
-        	.post(xuiUrl + "/data/internal/searchCases?ctid=PCS&use_case=WORKBASKET&view=WORKBASKET&page=1")
-        	.headers(Environment.postHeader)
-        	.header("accept", "application/json, text/plain, */*")
+		  .exec(http("XUI_040_010_DefendantSearchCases")
+			.post(xuiUrl + "/data/internal/searchCases?ctid=PCS&use_case=WORKBASKET&view=WORKBASKET&page=1")
+			.headers(Environment.postHeader)
+			.header("accept", "application/json")
 			.body(StringBody("""{"size":"25"}""")).asJson
-			.check(jsonPath("$.results.case_id").findAll.saveAs("caseIds"))
-        	.check(substring("/PCS/work-basket-inputs")))
+			.check(jsonPath("$.results[*].case_id").findAll.saveAs("caseIds"))
+			.check(status.is(200)))
 		}
+		
 		.pause(Environment.thinkTime)
 
 	val ViewCase = 
@@ -92,54 +115,19 @@ object PCSDefendant {
 			session.set("selectedCaseId", randomId)
 		})
 
-		.exec(http("XUI_070_DefendantViewCase")
+		/*=============================================
+		Open a random case from the caselist
+		===============================================*/
+
+		.exec(http("XUI_050_DefendantViewCase")
         	.get(xuiUrl + "/data/internal/cases/#{selectedCaseId}")
         	.headers(Environment.getHeader)
-        	.header("accept", "application/json, text/plain, */*")
-        	.check(substring("/PCS/work-basket-inputs")))
+        	.header("accept", "application/vnd.uk.gov.hmcts.ccd-data-store-api.ui-case-view.v2+json")
+        	.header("accept-encoding","gzip, deflate, br, zstd")
+			.header("content-type","application/json")
+			.header("experimental","true")
+			.check(substring("Possession Case Type"))
+			.check(status.is(200)))
 		
 		.pause(Environment.thinkTime)
-
-
-		
-
-		//.exec(CcdHelper.addCaseEvent("#{defendantEmail}", "#{defendantEmail}", CcdCaseTypes.PCS_PCS, "#{caseId}", "caseworkerNoticeOfChange", "bodies/pcsBodies/PCSSubmitNOC.json"))	
-		/*.exec(CcdHelper.createCase("#{housingEmail}", "#{housingPassword}", CcdCaseTypes.PCS_PCS, "createPossessionClaim", "bodies/pcsBodies/PCSCreateCase.json"))
-		.feed(feedPCSCWUserData)
-			.exec(session => session
-				.set("cwEmail", session("email").as[String])
-				.set("cwPassword", session("password").as[String]))
-	
-		.exec(CcdHelper.uploadDocumentToCdam("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
-			jsonPath("$.documents[0]._links.self.href").saveAs("TenancyDocumentURL"),
-			jsonPath("$.documents[0].hashToken").saveAs("TenancyDocumentHash")
-		)))
-		.exec(CcdHelper.uploadDocumentToCdam("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
-			jsonPath("$.documents[0]._links.self.href").saveAs("NoticeDocumentURL"),
-			jsonPath("$.documents[0].hashToken").saveAs("NoticeDocumentHash")
-		)))
-		.exec(CcdHelper.uploadDocumentToCdam("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
-			jsonPath("$.documents[0]._links.self.href").saveAs("RentArrearsDocumentURL"),
-			jsonPath("$.documents[0].hashToken").saveAs("RentArrearsDocumentHash")
-		)))
-		.exec(CcdHelper.uploadDocumentToCdam("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
-			jsonPath("$.documents[0]._links.self.href").saveAs("RentStatementDocumentURL"),
-			jsonPath("$.documents[0].hashToken").saveAs("RentStatementDocumentHash")
-		)))
-		.exec(CcdHelper.uploadDocumentToCdam("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
-			jsonPath("$.documents[0]._links.self.href").saveAs("TenancyAgreementDocumentURL"),
-			jsonPath("$.documents[0].hashToken").saveAs("TenancyAgreementDocumentHash")
-		)))
-		.exec(CcdHelper.addCaseEvent("#{housingEmail}", "#{housingPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "resumePossessionClaim", "bodies/pcsBodies/PCSSubmitClaim.json"))
-		.exec(payments.AddPCSPayment)
-		.exec(_.set("pastDate", DateUtils.getDatePast("yyyy-MM-dd", days = 10)))
-		.exec(CcdHelper.addCaseEvent("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "addCaseReviewDate", "bodies/pcsBodies/PCSAddReviewDate.json"))
-	*/}
-		//.feed(feedPCSCWUserData)
-//		.exec(CcdHelper.uploadDocumentToCdam("#{email}", "#{password}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "1MB.pdf", additionalChecks = Seq(
-//			jsonPath("$.documents[0]._links.self.href").saveAs("GADocumentURL"),
-//			jsonPath("$.documents[0].hashToken").saveAs("GADocumentHash")
-//		)))
-//		.exec(CcdHelper.addCaseEvent("#{email}", "#{password}", CcdCaseTypes.PCS_PCS, "#{caseId}", "enterGenApp", "pcsBodies/PCSEnterGeneralApplication.json"))
-				//.exec(CcdHelper.addCaseEvent("#{email}", "#{password}", CcdCaseTypes.PCS_PCS, "#{caseId}", "changeCaseState", "bodies/pcsBodies/PCSChangeState.json"))
-	
+}
