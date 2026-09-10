@@ -133,8 +133,8 @@ object ManageOrg {
 		Select Users
 		===============================================*/
 
-    group("ManageOrg_050_Users") {
-      exec(http("ManageOrg_050_005_AllUserListWithoutRoles")
+    group("ManageOrg_040_Users") {
+      exec(http("ManageOrg_040_005_AllUserListWithoutRoles")
         .get("/api/allUserListWithoutRoles")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
@@ -143,7 +143,7 @@ object ManageOrg {
         .check(jsonPath("$..userIdentifier").findAll.saveAs("allUserIds"))
         .check(status.is(200)))
 
-      .exec(http("ManageOrg_050_010_RetrieveAccessTypes")
+      .exec(http("ManageOrg_040_010_RetrieveAccessTypes")
         .post("/api/retrieve-access-types")
         .headers(Environment.postHeader)
         .header("accept", "application/json, text/plain, */*")
@@ -166,7 +166,7 @@ object ManageOrg {
 		Select a Random user
 		===============================================*/
 
-    .exec(http("ManageOrg_060_SelectUser")
+    .exec(http("ManageOrg_050_SelectUser")
         .get("/api/user-details?userId=#{selectedUserId}")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
@@ -195,7 +195,7 @@ object ManageOrg {
 		Update a users PCS Roles
 		===============================================*/
       
-    .exec(http("ManageOrg_070_UpdateUser")
+    .exec(http("ManageOrg_060_UpdateUser")
         .put("/api/ogd-flow/update/#{selectedUserId}")
         .headers(Environment.postHeader)
         .header("accept", "application/json, text/plain, */*")
