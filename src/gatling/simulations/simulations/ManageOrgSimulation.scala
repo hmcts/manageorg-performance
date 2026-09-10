@@ -117,7 +117,8 @@ class ManageOrgSimulation extends Simulation{
         .exec(
           ManageOrg.LandingPage,
           ManageOrg.Login,
-		      ManageOrg.Users
+		      ManageOrg.Users,
+          ManageOrg.ViewAndManageUsers
         )
     }
 
@@ -178,8 +179,8 @@ class ManageOrgSimulation extends Simulation{
 	setUp(
 		//ManageAndApproveOrg.inject(simulationProfile(testType, approveOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
     	//ManageAndApproveOtherOrg.inject(simulationProfile(testType, approveOtherOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		//ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		//PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
 
 	).protocols(httpProtocol)
      .assertions(assertions(testType))

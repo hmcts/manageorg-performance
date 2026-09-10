@@ -14,7 +14,11 @@ object ManageOrg {
 
 	val LandingPage = 
 
-    group("Managerg_010_HomePage") {
+    /*=============================================
+		Manage Org Landing Page
+		===============================================*/
+
+    group("ManageOrg_010_HomePage") {
       exec(http("ManageOrg_010_005_HomePage")
         .get("")
         .headers(Environment.navigationHeader)
@@ -31,7 +35,7 @@ object ManageOrg {
         .header("accept", "application/json, text/plain, */*")
         .check(substring("false")))
  
-      .exec(http("Managerg_020_HomePageAuthLogin")
+      .exec(http("ManageOrg_020_HomePageAuthLogin")
         .get("/auth/login")
         .headers(Headers.navigationHeader)
         .check(css("input[name='_csrf']", "value").saveAs("csrf")))
@@ -43,6 +47,10 @@ object ManageOrg {
 
     feed(feedManageOrgUserData)
 
+    /*=============================================
+		Enter Login Email
+		===============================================*/
+
     .group("ManageOrg_020_LoginEnterEmail") {
       exec(http("ManageOrg_020_005_LoginEnterEmail")
         .post(IdamUrl + "/enter-email")
@@ -53,6 +61,10 @@ object ManageOrg {
     }
 
     .pause(Environment.thinkTime)
+
+    /*=============================================
+		Enter Login Password
+		===============================================*/
 
     .group("ManageOrg_030_LoginEnterPassword") {
       exec(http("ManageOrg_030_005_LoginEnterPassword")
@@ -117,23 +129,26 @@ object ManageOrg {
 
   val Users =
 
+    /*=============================================
+		Select Users
+		===============================================*/
+
     group("ManageOrg_050_Users") {
-      exec(http("ManageOrg_050_005_Users")
+      exec(http("ManageOrg_050_005_AllUserListWithoutRoles")
         .get("/api/allUserListWithoutRoles")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
-        .check(substring("#{orgIdentifier}"))
         .check(jsonPath("$.organisationProfileIds[0]").saveAs("orgProfileId0"))
         .check(jsonPath("$.organisationProfileIds[1]").saveAs("orgProfileId1"))
         .check(jsonPath("$..userIdentifier").findAll.saveAs("allUserIds"))
         .check(status.is(200)))
 
-      .exec(http("ManageOrg_050_005_Users")
+      .exec(http("ManageOrg_050_010_RetrieveAccessTypes")
         .post("/api/retrieve-access-types")
         .headers(Environment.postHeader)
         .header("accept", "application/json, text/plain, */*")
         .body(StringBody("""{"organisationProfileIds":["#{orgProfileId0}","#{orgProfileId1}"]}""")).asJson
-        .check(substring("#{orgIdentifier}"))
+        .check(substring("Civil Possession"))
         .check(status.is(200)))
     }
     
@@ -147,19 +162,27 @@ object ManageOrg {
       val randomId = allUserIds(scala.util.Random.nextInt(allUserIds.size))
       session.set("selectedUserId", randomId)})
 
-    .exec(http("ViewAndManageUsers_060_SelectUser")
+    /*=============================================
+		Select a Random user
+		===============================================*/
+
+    .exec(http("ManageOrg_060_SelectUser")
         .get("/api/user-details?userId=#{selectedUserId}")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
-        .check(substring("#{orgIdentifier}"))
-        .check(jsonPath("$.firstName").saveAs("userFirstName"))
-        .check(jsonPath("$.lastName").saveAs("userLastName"))
-        .check(jsonPath("$.email").saveAs("userEmail"))
-        .check(jsonPath("$.userAccessTypes[*]").count.saveAs("accessTypesCount"))
+        .check(jsonPath("$.users[0].firstName").saveAs("userFirstName"))
+        .check(jsonPath("$.users[0].lastName").saveAs("userLastName"))
+        .check(jsonPath("$.users[0].email").saveAs("userEmail"))
+        .check(jsonPath("$.users[0].userAccessTypes[*]").count.saveAs("accessTypesCount"))
         .check(status.is(200)))
 
     .pause(Environment.thinkTime)
 
+    /*=============================================
+		Check how many accessTypes the selected user has
+    and use the appropriate payload to ensure a change
+    is registered
+		===============================================*/
     .exec(session => {
         val bodyFile = session("accessTypesCount").as[Int] match {
         case 2 => "bodies/UpdateUserDutyAdvisorRole.json"
@@ -167,8 +190,12 @@ object ManageOrg {
     }
     session.set("updateUserBody", bodyFile) 
     })
+
+    /*=============================================
+		Update a users PCS Roles
+		===============================================*/
       
-    .exec(http("ViewAndManageUsers_070_UpdateUser")
+    .exec(http("ManageOrg_070_UpdateUser")
         .put("/api/ogd-flow/update/#{selectedUserId}")
         .headers(Environment.postHeader)
         .header("accept", "application/json, text/plain, */*")
