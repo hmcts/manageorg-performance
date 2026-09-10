@@ -1,0 +1,35 @@
+{
+  "userPayload": {
+    "id": "#{selectedUserId}",
+    "email": "{userEmail}",
+    "firstName": "{userFirstName}",
+    "lastName": "{userLastName}",
+    "idamStatus": "ACTIVE",
+    "rolesAdd": [],
+    "rolesDelete": [],
+    "userAccessTypes": [
+      {
+        "jurisdictionId": "PCS",
+        "organisationProfileId": "SOLICITOR_PROFILE",
+        "accessTypeId": "solicitor-org-claimant-access",
+        "enabled": true
+      },
+      {
+        "jurisdictionId": "PCS",
+        "organisationProfileId": "SOLICITOR_PROFILE",
+        "accessTypeId": "solicitor-org-defendant-access",
+        "enabled": true
+      },
+      {
+        "jurisdictionId": "PCS",
+        "organisationProfileId": "SOLICITOR_PROFILE",
+        "accessTypeId": "duty-advisor-access",
+        "enabled": false
+      }
+    ]
+  },
+  "orgIdsPayload": [
+    "SOLICITOR_PROFILE",
+    "ORGANISATION_PROFILE"
+  ]
+}

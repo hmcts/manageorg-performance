@@ -14,35 +14,16 @@ object ManageOrg {
 
 	val LandingPage = 
 
-    // exec(_.setAll(
-    //   ("FirstName",Common.randomString(10)),
-    //   ("LastName",Common.randomString(10)),
-    //   ("RandDigits",Common.randomString(5).toUpperCase()),
-    //   ("RandPBA1",Common.randomNumber(7)),
-    //   ("RandPBA2",Common.randomNumber(7)),
-    //   ("RandPBA3",Common.randomNumber(7)),
-    //   "currentDate" -> Common.now.format(Common.patternDate),
-    //   "currentTime" -> Common.now.format(Common.patternTime)
-    // ))
-// 
     group("Managerg_010_HomePage") {
       exec(http("ManageOrg_010_005_HomePage")
         .get("")
         .headers(Environment.navigationHeader)
         .check(substring("Manage organisation")))
 
-      //.exec(getCookieValue(CookieKey("XSRF-TOKEN").withSecure(true).saveAs("XSRFToken")))
-
       .exec(http("ManageOrg_000_ConfigurationUI")
         .get("/external/configuration-ui/")
         .headers(Environment.getHeader)
         .check(substring("perftest")))
-
-      // .exec(http("ManageOrg_010_015_ConfigurationUI2")
-      //   .get("/external/configuration-ui")
-      //   .headers(Environment.getHeader)
-      //   .header("accept", "application/json, text/plain, */*")
-      //   .check(substring("idamWeb")))
 
       .exec(http("ManageOrg_000_IsAuthenticated")
         .get("/auth/isAuthenticated")
@@ -70,6 +51,8 @@ object ManageOrg {
         .formParam("_csrf", "#{csrf}")
         .check(status.is(200)))
     }
+
+    .pause(Environment.thinkTime)
 
     .group("ManageOrg_030_LoginEnterPassword") {
       exec(http("ManageOrg_030_005_LoginEnterPassword")
@@ -129,8 +112,10 @@ object ManageOrg {
 
       .exitHereIfFailed
     }
+      
+    .pause(Environment.thinkTime)
 
-  val Users = 
+  val Users =
 
     group("ManageOrg_050_Users") {
       exec(http("ManageOrg_050_005_Users")
@@ -143,7 +128,7 @@ object ManageOrg {
         .check(jsonPath("$..userIdentifier").findAll.saveAs("allUserIds"))
         .check(status.is(200)))
 
-      exec(http("ManageOrg_050_005_Users")
+      .exec(http("ManageOrg_050_005_Users")
         .post("/api/retrieve-access-types")
         .headers(Environment.postHeader)
         .header("accept", "application/json, text/plain, */*")
@@ -151,6 +136,8 @@ object ManageOrg {
         .check(substring("#{orgIdentifier}"))
         .check(status.is(200)))
     }
+    
+    .pause(Environment.thinkTime)
 
   val ViewAndManageUsers = 
 
@@ -158,25 +145,37 @@ object ManageOrg {
     exec(session => {
       val allUserIds = session("allUserIds").as[Seq[String]]
       val randomId = allUserIds(scala.util.Random.nextInt(allUserIds.size))
-      session.set("selectedUserId", randomId)
-      })
+      session.set("selectedUserId", randomId)})
 
-    .group("ViewAndManageUsers_060_SelectUser") {
-      exec(http("ViewAndManageUsers_060_005_SelectUser")
+    .exec(http("ViewAndManageUsers_060_SelectUser")
         .get("/api/user-details?userId=#{selectedUserId}")
         .headers(Environment.getHeader)
         .header("accept", "application/json, text/plain, */*")
         .check(substring("#{orgIdentifier}"))
+        .check(jsonPath("$.firstName").saveAs("userFirstName"))
+        .check(jsonPath("$.lastName").saveAs("userLastName"))
+        .check(jsonPath("$.email").saveAs("userEmail"))
+        .check(jsonPath("$.userAccessTypes[*]").count.saveAs("accessTypesCount"))
         .check(status.is(200)))
 
-      exec(http("ViewAndManageUsers_060_010_SelectUser")
-        .put("/api/ogd-flow/update/d538e8d3-3798-4d65-a495-4e5ae9e119ee")
+    .pause(Environment.thinkTime)
+
+    .exec(session => {
+        val bodyFile = session("accessTypesCount").as[Int] match {
+        case 2 => "bodies/UpdateUserDutyAdvisorRole.json"
+        case _ => "bodies/UpdateUserGARoles.json" 
+    }
+    session.set("updateUserBody", bodyFile) 
+    })
+      
+    .exec(http("ViewAndManageUsers_070_UpdateUser")
+        .put("/api/ogd-flow/update/#{selectedUserId}")
         .headers(Environment.postHeader)
         .header("accept", "application/json, text/plain, */*")
-        .body(StringBody("""{"organisationProfileIds":["#{orgProfileId0}","#{orgProfileId1}"]}""")).asJson
-        .check(substring("#{orgIdentifier}"))
-        .check(status.is(200)))
-    }
+        .body(ElFileBody("#{updateUserBody}"))
+        .check(jsonPath("$.statusUpdateResponse.idamStatusCode").is("200")))
+
+    .pause(Environment.thinkTime)
 
   val SubmitOrg = 
 

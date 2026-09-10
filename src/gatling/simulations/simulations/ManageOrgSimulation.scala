@@ -117,7 +117,7 @@ class ManageOrgSimulation extends Simulation{
         .exec(
           ManageOrg.LandingPage,
           ManageOrg.Login,
-		  ManageOrg.Users
+		      ManageOrg.Users
         )
     }
 
