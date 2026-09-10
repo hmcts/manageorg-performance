@@ -104,8 +104,8 @@ class ManageOrgSimulation extends Simulation{
     .exitBlockOnFail {
       exec(_.set("env", s"${env}"))
         .exec(
-          PCSClaimant.create,
-		  PCSDefendant.NOC
+          //PCSClaimant.create,
+		      PCSDefendant.NOC
         )
     }
 

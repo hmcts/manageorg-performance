@@ -17,23 +17,30 @@ object PCSDefendant {
 	val feedPCSCWUserData = csv("PCSCWUserData.csv").circular
 	val feedPCSHousingUserData = csv("PCSHousingUserData.csv").circular
 
-	val NOC = {
+	val NOC = 
 
 		feed(feedPCSDefendantData)
 			.exec(session => session
 				.set("defendantEmail", session("email").as[String])
 				.set("defendantPassword", session("password").as[String])
-				.set("caseId", "1788991038493785") // For debugging
+				.set("caseId", "1788990169492996") // For debugging
 				.set("caseType", "PCS"))
 
 		.exec(XuiHelper.Homepage)
+
+		.pause(Environment.thinkTime)
+
 		.exec(XuiHelper.Login("#{defendantEmail}", "#{defendantPassword}"))
+
+		.pause(Environment.thinkTime)
 
 		.exec(http("XUI_020_DefendantNOCQuestions")
         	.get(xuiUrl + "/api/noc/nocQuestions?caseId=#{caseId}")
         	.headers(Environment.getHeader)
         	.header("accept", "application/json, text/plain, */*")
         	.check(substring("Enter client first name")))
+
+		.pause(Environment.thinkTime)
 
 		.exec(getCookieValue(CookieKey("XSRF-TOKEN").withDomain(xuiUrl.replace("https://", "")).withSecure(true).saveAs("XSRFToken")))
 
@@ -45,6 +52,8 @@ object PCSDefendant {
       		.header("x-xsrf-token", "#{XSRFToken}")
 			.body(ElFileBody("bodies/pcsBodies/PCSValidateNoCQuestions.json"))
      		.check(substring("Notice of Change answers verified successfully")))
+		
+		.pause(Environment.thinkTime)
 
 		.exec(http("XUI_040_DefendantNOC")
 			.post(xuiUrl + "/api/noc/submitNoCEvents")
@@ -52,6 +61,47 @@ object PCSDefendant {
       		.header("x-xsrf-token", "#{XSRFToken}")
 			.body(ElFileBody("bodies/pcsBodies/PCSSubmitNoC.json"))
      		.check(substring("APPROVED")))
+
+		.pause(Environment.thinkTime)
+
+	val ViewCaseList = 
+
+		group("XUI_060_ViewCaseList") {
+		  exec(http("XUI_060_005_DefendantWorkBasketInputs")
+        	.get(xuiUrl + "/data/internal/case-types/PCS/work-basket-inputs")
+        	.headers(Environment.getHeader)
+        	.header("accept", "application/json, text/plain, */*")
+        	.check(substring("/PCS/work-basket-inputs")))
+
+		  .exec(http("XUI_060_010_SearchCases")
+        	.post(xuiUrl + "/data/internal/searchCases?ctid=PCS&use_case=WORKBASKET&view=WORKBASKET&page=1")
+        	.headers(Environment.postHeader)
+        	.header("accept", "application/json, text/plain, */*")
+			.body(StringBody("""{"size":"25"}""")).asJson
+			.check(jsonPath("$.results.case_id").findAll.saveAs("caseIds"))
+        	.check(substring("/PCS/work-basket-inputs")))
+		}
+		.pause(Environment.thinkTime)
+
+	val ViewCase = 
+
+		 //Select a random userId from the saved allUserIds
+		exec(session => {
+			val allCaseIds = session("caseIds").as[Seq[String]]
+			val randomId = allCaseIds(scala.util.Random.nextInt(allCaseIds.size))
+			session.set("selectedCaseId", randomId)
+		})
+
+		.exec(http("XUI_070_DefendantViewCase")
+        	.get(xuiUrl + "/data/internal/cases/#{selectedCaseId}")
+        	.headers(Environment.getHeader)
+        	.header("accept", "application/json, text/plain, */*")
+        	.check(substring("/PCS/work-basket-inputs")))
+		
+		.pause(Environment.thinkTime)
+
+
+		
 
 		//.exec(CcdHelper.addCaseEvent("#{defendantEmail}", "#{defendantEmail}", CcdCaseTypes.PCS_PCS, "#{caseId}", "caseworkerNoticeOfChange", "bodies/pcsBodies/PCSSubmitNOC.json"))	
 		/*.exec(CcdHelper.createCase("#{housingEmail}", "#{housingPassword}", CcdCaseTypes.PCS_PCS, "createPossessionClaim", "bodies/pcsBodies/PCSCreateCase.json"))
@@ -92,4 +142,4 @@ object PCSDefendant {
 //		)))
 //		.exec(CcdHelper.addCaseEvent("#{email}", "#{password}", CcdCaseTypes.PCS_PCS, "#{caseId}", "enterGenApp", "pcsBodies/PCSEnterGeneralApplication.json"))
 				//.exec(CcdHelper.addCaseEvent("#{email}", "#{password}", CcdCaseTypes.PCS_PCS, "#{caseId}", "changeCaseState", "bodies/pcsBodies/PCSChangeState.json"))
-	}
+	
