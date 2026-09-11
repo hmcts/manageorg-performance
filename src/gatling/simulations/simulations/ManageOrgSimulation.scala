@@ -35,14 +35,14 @@ class ManageOrgSimulation extends Simulation{
 
 	/* PERFORMANCE TEST CONFIGURATION */
 	val approveOrgTargetPerHour:Double = 360 //360
-  	val approveOtherOrgTargetPerHour:Double = 20
-  	val pcsCaseCreateViewUpdateTargetPerHour: Double = 100
+  val approveOtherOrgTargetPerHour:Double = 20
+  val pcsCaseCreateViewUpdateTargetPerHour: Double = 60
 	val manageOrgUpdateTargetPerHour: Double = 20
 
 
-	val rampUpDurationMins = 2 //5
+	val rampUpDurationMins = 5 //5
 	val rampDownDurationMins = 1 //5 
-	val testDurationMins = 30 //60
+	val testDurationMins = 60 //60
 
 	val numberOfPipelineUsers = 1
 	val pipelinePausesMillis:Long = 3000 //3 seconds
