@@ -158,6 +158,8 @@ class ManageOrgSimulation extends Simulation{
             //details("CreateOrg_020_SubmitOtherOrgRegistration").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
             //details("AdminOrg_070_AddPBA").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
             //details("AdminOrg_080_ApproveOrg").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt)
+            details("CCD_SubmitEvent_addCaseReviewDate").successfulRequests.count.gte((pcsCaseCreateViewUpdateTargetPerHour * 0.9).ceil.toInt),
+            details("CCD_SubmitEvent_makeAnApplication").successfulRequests.count.gte((pcsCaseCreateViewUpdateTargetPerHour * 0.9).ceil.toInt)
           )
         }
         else{
