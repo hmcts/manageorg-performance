@@ -108,11 +108,5 @@ object PCSClaimant {
 		.exec(CcdHelper.addCaseEvent("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "addCaseReviewDate", "bodies/pcsBodies/PCSAddReviewDate.json"))
 		.pause(Environment.thinkTime)
 
-
-		/*=============================================
-		Add Case Review Date case event
-		===============================================*/
-		.exec(CcdHelper.addCaseEvent("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "addCaseReviewDate", "bodies/pcsBodies/PCSAddReviewDate.json"))
-		.pause(Environment.thinkTime)
 	}	
 }

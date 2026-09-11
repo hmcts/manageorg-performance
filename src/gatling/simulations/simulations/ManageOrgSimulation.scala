@@ -107,7 +107,8 @@ class ManageOrgSimulation extends Simulation{
           PCSClaimant.Create,
 		      PCSDefendant.NOC,
           PCSDefendant.ViewCaseList,
-          PCSDefendant.ViewCase
+          PCSDefendant.ViewCase,
+          PCSDefendant.MakeAnApplication
         )
     }
 
@@ -179,8 +180,8 @@ class ManageOrgSimulation extends Simulation{
 	setUp(
 		//ManageAndApproveOrg.inject(simulationProfile(testType, approveOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
     	//ManageAndApproveOtherOrg.inject(simulationProfile(testType, approveOtherOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		//PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		//ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
 
 	).protocols(httpProtocol)
      .assertions(assertions(testType))

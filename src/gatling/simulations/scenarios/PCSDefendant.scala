@@ -130,4 +130,30 @@ object PCSDefendant {
 			.check(status.is(200)))
 		
 		.pause(Environment.thinkTime)
+
+	val MakeAnApplication = 
+
+		/*=============================================
+		Upload Witness Statement Document
+		===============================================*/
+
+		feed(feedPCSCWUserData)
+		.exec(session => session
+			.set("cwEmail", session("email").as[String])
+			.set("cwPassword", session("password").as[String]))
+
+		.exec(CcdHelper.uploadDocumentToCdam("#{defendantEmail}", "#{defendantPassword}", CcdCaseTypes.PCS_PCS.copy(microservice = "pcs_api"), "DUMMY_WITNESS_STATEMENT.pdf", additionalChecks = Seq(
+			jsonPath("$.documents[0]._links.self.href").saveAs("WitnessStatementDocumentURL"),
+			jsonPath("$.documents[0].hashToken").saveAs("WitnessStatementDocumentHash")
+		)))
+		.pause(Environment.thinkTime)
+
+		/*=============================================
+		Make an Application as the defendant Solicitor
+		===============================================*/
+
+		.exec(CcdHelper.addCaseEvent("#{defendantEmail}", "#{defendantPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "makeAnApplication", "bodies/pcsBodies/PCSMakeAnApplication.json", additionalTriggerChecks = Seq(
+				jsonPath("$.case_details.case_data.currentRepresentedPartyId").saveAs("representedPartyId")
+		)))
+		.pause(Environment.thinkTime)
 }

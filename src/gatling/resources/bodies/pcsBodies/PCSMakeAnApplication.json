@@ -1,0 +1,45 @@
+{
+  "data": {
+    "currentRepresentedPartyId": "#{representedPartyId}",
+    "currentRepresentedPartyName": "GA Perftest",
+    "xui_genapp_StandardFee": "£126",
+    "xui_genapp_MaxFee": "£321",
+    "xui_genapp_ShowHwfScreens": "YES",
+    "xui_genapp_ApplicationType": "SOMETHING_ELSE",
+    "xui_genapp_NeedHwf": "NO",
+    "xui_genapp_OtherPartiesAgreed": "NO",
+    "xui_genapp_WithoutNotice": "NO",
+    "xui_genapp_WhatOrderWanted": "Performance Test Order for GA <date-time>",
+    "xui_genapp_HasSupportingDocuments": "YES",
+    "xui_genapp_UploadedDocuments": [
+      {
+        "value": {
+          "documentType": "WITNESS_STATEMENT",
+          "contentType": null,
+          "sizeInBytes": null,
+          "document": {
+            "document_url": "#{WitnessStatementDocumentURL}",
+            "document_binary_url": "#{WitnessStatementDocumentURL}/binary",
+            "document_filename": "DUMMY_WITNESS_STATEMENT.pdf",
+            "document_hash": "#{WitnessStatementDocumentHash}"
+          }
+        },
+        "id": null
+      }
+    ],
+    "xui_genapp_LanguageUsed": "ENGLISH",
+    "xui_genapp_AgreementDefendantLegalRep": [
+      "AGREED"
+    ],
+    "xui_genapp_SotFullName": "Defendant Solicitor Perftest",
+    "xui_genapp_SotFirmName": "DefendantSolicitor",
+    "xui_genapp_SotPositionHeld": "Solicitor"
+  },
+  "event": {
+    "id": "makeAnApplication",
+    "summary": "",
+    "description": ""
+  },
+  "event_token": "#{eventToken}",
+  "ignore_warning": false
+}
