@@ -12,7 +12,7 @@ import xui.XuiHelper.xuiUrl
 
 object PCSDefendant {
 
-	val feedPCSDefendantData = csv("PCSDefendantUserData.csv").circular
+	val feedPCSDefendantData = csv("PCSDefendantUserData.csv").random
 	val feedPCSCWUserData = csv("PCSCWUserData.csv").circular
 	val feedPCSHousingUserData = csv("PCSHousingUserData.csv").circular
 
@@ -100,9 +100,9 @@ object PCSDefendant {
 			.headers(Environment.postHeader)
 			.header("accept", "application/json")
 			.body(StringBody("""{"size":"25"}""")).asJson
-			.check(jsonPath("$.results[*].case_id").findAll.saveAs("caseIds"))
+			.check(jsonPath("$.results[*].case_id").findAll.saveAs("caseIds")) //** use findRandom
 			.check(status.is(200)))
-		}
+		} 
 		
 		.pause(Environment.thinkTime)
 

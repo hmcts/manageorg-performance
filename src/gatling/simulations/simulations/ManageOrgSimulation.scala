@@ -36,7 +36,7 @@ class ManageOrgSimulation extends Simulation{
 	/* PERFORMANCE TEST CONFIGURATION */
 	val approveOrgTargetPerHour:Double = 360 //360
   val approveOtherOrgTargetPerHour:Double = 20
-  val pcsCaseCreateViewUpdateTargetPerHour: Double = 60
+  val pcsCaseCreateViewUpdateTargetPerHour: Double = 200
 	val manageOrgUpdateTargetPerHour: Double = 20
 
 

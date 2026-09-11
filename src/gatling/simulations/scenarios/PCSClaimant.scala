@@ -103,10 +103,24 @@ object PCSClaimant {
 		.exec(_.set("pastDate", DateUtils.getDatePast("yyyy-MM-dd", days = 10)))
 
 		/*=============================================
+		View Case List
+		===============================================*/
+		.exec(CcdHelper.searchCases("#{housingEmail}", "#{housingPassword}", CcdCaseTypes.PCS_PCS, "bodies/pcsBodies/PCSSearchCaseList.json"))
+		.pause(Environment.thinkTime)
+
+		/*=============================================
+		View Case
+		===============================================*/
+		.exec(CcdHelper.getCase("#{housingEmail}", "#{housingEmail}", CcdCaseTypes.PCS_PCS, "#{caseId}"))
+		.pause(Environment.thinkTime)
+
+		/*=============================================
 		Add Case Review Date case event
 		===============================================*/
 		.exec(CcdHelper.addCaseEvent("#{cwEmail}", "#{cwPassword}", CcdCaseTypes.PCS_PCS, "#{caseId}", "addCaseReviewDate", "bodies/pcsBodies/PCSAddReviewDate.json"))
 		.pause(Environment.thinkTime)
+
+
 
 	}	
 }
