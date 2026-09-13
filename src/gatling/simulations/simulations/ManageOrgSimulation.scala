@@ -37,7 +37,7 @@ class ManageOrgSimulation extends Simulation{
 	val approveOrgTargetPerHour:Double = 360 //360
   val approveOtherOrgTargetPerHour:Double = 20
   val pcsCaseCreateViewUpdateTargetPerHour: Double = 200
-	val manageOrgUpdateTargetPerHour: Double = 20
+	val manageOrgUpdateTargetPerHour: Double = 200
 
 
 	val rampUpDurationMins = 5 //5
@@ -158,8 +158,8 @@ class ManageOrgSimulation extends Simulation{
             //details("CreateOrg_020_SubmitOtherOrgRegistration").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
             //details("AdminOrg_070_AddPBA").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt),
             //details("AdminOrg_080_ApproveOrg").successfulRequests.count.gte((approveOrgTargetPerHour * 0.9).ceil.toInt)
-            details("CCD_SubmitEvent_addCaseReviewDate").successfulRequests.count.gte((pcsCaseCreateViewUpdateTargetPerHour * 0.9).ceil.toInt),
-            details("CCD_SubmitEvent_makeAnApplication").successfulRequests.count.gte((pcsCaseCreateViewUpdateTargetPerHour * 0.9).ceil.toInt)
+            //details("CCD_SubmitEvent_addCaseReviewDate").successfulRequests.count.gte((pcsCaseCreateViewUpdateTargetPerHour * 0.9).ceil.toInt),
+            //details("CCD_SubmitEvent_makeAnApplication").successfulRequests.count.gte((pcsCaseCreateViewUpdateTargetPerHour * 0.9).ceil.toInt)
           )
         }
         else{
@@ -182,8 +182,8 @@ class ManageOrgSimulation extends Simulation{
 	setUp(
 		//ManageAndApproveOrg.inject(simulationProfile(testType, approveOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
     	//ManageAndApproveOtherOrg.inject(simulationProfile(testType, approveOtherOrgTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
-		//ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		//PCSSolicitorCreateUpdateViewCase.inject(simulationProfile(testType, pcsCaseCreateViewUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
+		ManageOrgGroupAccess.inject(simulationProfile(testType, manageOrgUpdateTargetPerHour, numberOfPipelineUsers)).pauses(pauseOption),
 
 	).protocols(httpProtocol)
      .assertions(assertions(testType))
